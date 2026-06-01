@@ -27,5 +27,6 @@ namespace SkillMatch.Models
         public virtual User? Client { get; set; }
         [ForeignKey("CategoryId")]
         public virtual Category? Category { get; set; }
+        public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
     }
 }

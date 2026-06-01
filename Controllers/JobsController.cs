@@ -3,29 +3,48 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkillMatch.Data;
 using SkillMatch.Models;
+using System;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SkillMatch.Controllers
 {
     public class JobsController : Controller
     {
-        // Khai báo kết nối cơ sở dữ liệu
         private readonly SkillMatchDbContext _context;
 
-        // Hàm khởi tạo để ép Database Context vào controller
+        // Hàm khởi tạo tiêm trực tiếp Database Context vào controller
         public JobsController(SkillMatchDbContext context)
         {
             _context = context;
         }
 
-        // 1. Xem danh sách toàn bộ công việc (Ai cũng xem được)
-        public async Task<IActionResult> Index()
+        // ============================================================================
+        // VAI TRÒ: CHUNG (TẤT CẢ THÀNH VIÊN ĐỀU XEM ĐƯỢC)
+        // ============================================================================
+
+        // 1. Xem danh sách toàn bộ công việc (Hỗ trợ lọc theo Danh mục - CategoryId)
+        public async Task<IActionResult> Index(int? categoryId)
         {
-            var jobs = await _context.Jobs.ToListAsync();
+            // Nạp danh sách categories đưa ra giao diện làm bộ lọc
+            ViewBag.Categories = await _context.Categories.ToListAsync();
+            ViewBag.SelectedCategory = categoryId;
+
+            // Truy vấn lấy danh sách Jobs
+            var jobsQuery = _context.Jobs.AsQueryable();
+
+            // Nếu người dùng chọn một danh mục cụ thể thì lọc theo danh mục đó
+            if (categoryId.HasValue)
+            {
+                jobsQuery = jobsQuery.Where(j => j.CategoryId == categoryId.Value);
+            }
+
+            var jobs = await jobsQuery.OrderByDescending(j => j.CreatedAt).ToListAsync();
             return View(jobs);
         }
 
-        // 2. Xem chi tiết 1 công việc cụ thể
+        // 2. Xem chi tiết 1 công việc cụ thể (Kèm theo thông tin Tên Công ty & Tên Danh mục)
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -33,97 +52,78 @@ namespace SkillMatch.Controllers
             var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
             if (job == null) return NotFound();
 
+            // Lấy thêm thông tin tên Danh mục đưa vào ViewBag
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == job.CategoryId);
+            ViewBag.CategoryName = category?.Name ?? "Chưa phân loại";
+
+            // Lấy thêm thông tin Khách hàng/Doanh nghiệp (ClientId) đăng bài này
+            var client = await _context.Users.FirstOrDefaultAsync(u => u.Id == job.ClientId);
+            ViewBag.ClientName = client?.FullName ?? "Nhà tuyển dụng ẩn danh";
+
             return View(job);
         }
 
-        // 3. Giao diện Đăng tin tuyển dụng (Chỉ Khách hàng được vào)
+
+        // ============================================================================
+        // VAI TRÒ: KHÁCH HÀNG (CLIENT)
+        // ============================================================================
+
+        // 3. Giao diện Đăng tin tuyển dụng (Chỉ Khách hàng được quyền truy cập)
         [Authorize(Roles = "Client")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // Truyền danh sách danh mục để đổ vào thẻ <select> lựa chọn trên giao diện
+            ViewBag.Categories = await _context.Categories.ToListAsync();
             return View();
         }
 
-        // 4. Xử lý lưu tin tuyển dụng mới vào Database
+        // 4. Xử lý lưu tin tuyển dụng mới vào cơ sở dữ liệu
         [HttpPost]
         [Authorize(Roles = "Client")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Budget,Deadline")] Job job)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,Budget,Deadline,CategoryId")] Job job)
         {
             if (ModelState.IsValid)
             {
-                // Lấy ID của Khách hàng đang đăng nhập đưa vào Job
+                // Lấy ID của Khách hàng đang đăng nhập từ hệ thống định danh cá nhân (Claims)
                 var clientIdClaim = User.FindFirst("UserId")?.Value;
                 if (clientIdClaim != null)
                 {
                     job.ClientId = int.Parse(clientIdClaim);
                 }
 
-                job.Status = "Open";
+                job.Status = "Active"; // Mặc định trạng thái ban đầu là Active để sinh viên tìm thấy
                 job.CreatedAt = DateTime.Now;
 
                 _context.Add(job);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Categories = await _context.Categories.ToListAsync();
             return View(job);
         }
 
-        // 5. ACTION: Xử lý Sinh viên gửi đơn ứng tuyển (Bị lỗi dấu ngoặc cũ của bạn đã sửa tại đây)
+        // 5. Khách hàng bấm nút "Duyệt nhận" (Hire) một sinh viên làm việc
         [HttpPost]
-        [Authorize(Roles = "Student")] // Chỉ sinh viên mới được ứng tuyển
-        public async Task<IActionResult> Apply(int jobId, string coverLetter)
-        {
-            // Lấy ID của sinh viên đang đăng nhập từ Cookie
-            var studentIdClaim = User.FindFirst("UserId")?.Value;
-            if (studentIdClaim == null) return Challenge();
-            int studentId = int.Parse(studentIdClaim);
-
-            // Kiểm tra xem sinh viên này đã ứng tuyển công việc này chưa để tránh trùng lặp
-            var alreadyApplied = await _context.Applications
-                .AnyAsync(a => a.JobId == jobId && a.StudentId == studentId);
-
-            if (alreadyApplied)
-            {
-                TempData["Message"] = "Bạn đã ứng tuyển công việc này rồi!";
-                return RedirectToAction("Details", new { id = jobId });
-            }
-
-            // Tạo đơn ứng tuyển mới
-            var app = new Application
-            {
-                JobId = jobId,
-                StudentId = studentId,
-                CoverLetter = coverLetter,
-                Status = "Pending",
-                AppliedAt = DateTime.Now
-            };
-
-            _context.Applications.Add(app);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Ứng tuyển thành công! Vui lòng chờ phản hồi từ khách hàng.";
-            return RedirectToAction("Details", new { id = jobId });
-        }
-
-        // 6. ACTION: Xử lý Khách hàng bấm nút "Duyệt" (Hire) sinh viên làm việc
-        [HttpPost]
-        [Authorize(Roles = "Client")] // Chỉ khách hàng mới được duyệt
+        [Authorize(Roles = "Client")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AcceptApplicant(int applicationId)
         {
-            // Tìm đơn ứng tuyển
+            // Khôi phục đơn ứng tuyển kèm theo dữ liệu liên kết bảng Jobs
             var application = await _context.Applications
                 .Include(a => a.Job)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
 
             if (application == null || application.Job == null) return NotFound();
 
-            // Cập nhật trạng thái đơn ứng tuyển của sinh viên này thành Được nhận
+            // Cập nhật trạng thái đơn ứng tuyển của sinh viên này thành Được nhận (Accepted)
             application.Status = "Accepted";
 
-            // Đổi trạng thái công việc thành Processing (Đang thực hiện)
+            // Chuyển đổi trạng thái công việc từ Active thành Processing (Đang thực hiện)
             application.Job.Status = "Processing";
 
-            // Tự động từ chối tất cả các ứng viên còn lại của công việc này
+            // Tự động chuyển tất cả các đơn ứng tuyển của các sinh viên khác trong dự án này thành Rejected (Từ chối)
             var otherApplications = await _context.Applications
                 .Where(a => a.JobId == application.JobId && a.Id != applicationId)
                 .ToListAsync();
@@ -135,6 +135,54 @@ namespace SkillMatch.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", new { id = application.JobId });
+        }
+
+
+        // ============================================================================
+        // VAI TRÒ: NGƯỜI NHẬN VIỆC (STUDENT)
+        // ============================================================================
+
+        // 6. Xử lý Sinh viên nộp đơn ứng tuyển gửi kèm Thư giới thiệu (Cover Letter)
+        [HttpPost]
+        [Authorize(Roles = "Student")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Apply(int jobId, string coverLetter)
+        {
+            var studentIdClaim = User.FindFirst("UserId")?.Value;
+            if (studentIdClaim == null) return Challenge();
+            int studentId = int.Parse(studentIdClaim);
+
+            if (string.IsNullOrEmpty(coverLetter))
+            {
+                TempData["ErrorMessage"] = "Vui lòng nhập thư giới thiệu bản thân trước khi nộp đơn!";
+                return RedirectToAction("Details", new { id = jobId });
+            }
+
+            // Kiểm tra xem sinh viên này đã từng nộp đơn ứng tuyển dự án này chưa để tránh gửi trùng lặp dữ liệu
+            var alreadyApplied = await _context.Applications
+                .AnyAsync(a => a.JobId == jobId && a.StudentId == studentId);
+
+            if (alreadyApplied)
+            {
+                TempData["ErrorMessage"] = "Bạn đã gửi đơn ứng tuyển công việc này rồi!";
+                return RedirectToAction("Details", new { id = jobId });
+            }
+
+            // Tạo thực thể Đơn ứng tuyển mới khớp hoàn hảo với cấu trúc bảng
+            var app = new Application
+            {
+                JobId = jobId,
+                StudentId = studentId,
+                CoverLetter = coverLetter,
+                Status = "Pending", // Trạng thái mặc định: Chờ duyệt tuyển
+                AppliedAt = DateTime.Now
+            };
+
+            _context.Applications.Add(app);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Ứng tuyển thành công! Vui lòng chờ phản hồi từ nhà tuyển dụng.";
+            return RedirectToAction("Details", new { id = jobId });
         }
     }
 }

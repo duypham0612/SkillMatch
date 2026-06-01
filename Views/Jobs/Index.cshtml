@@ -1,0 +1,66 @@
+﻿@model IEnumerable<SkillMatch.Models.Job>
+@{
+    ViewData["Title"] = "Danh sách việc làm";
+    var categories = ViewBag.Categories as IEnumerable<SkillMatch.Models.Category>;
+    var selectedCategory = ViewBag.SelectedCategory as int?;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">💼 Danh sách việc làm sinh viên</h2>
+        @if (User.IsInRole("Client"))
+        {
+            <a asp-action="Create" class="btn btn-primary fw-bold">+ Đăng tin tuyển dụng</a>
+        }
+    </div>
+
+    @if (categories != null && categories.Any())
+    {
+        <div class="mb-4">
+            <span class="fw-bold me-2">Lọc theo ngành:</span>
+            <a href="@Url.Action("Index", "Jobs")" class="btn btn-sm @(selectedCategory == null ? "btn-dark" : "btn-outline-dark") me-2">Tất cả</a>
+            @foreach (var cat in categories)
+            {
+                <a href="@Url.Action("Index", "Jobs", new { categoryId = cat.Id })"
+                   class="btn btn-sm @(selectedCategory == cat.Id ? "btn-dark" : "btn-outline-dark") me-2">
+                    @cat.Name
+                </a>
+            }
+        </div>
+    }
+
+    <div class="row">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="col-12 text-center py-5">
+                <p class="text-muted italic">Hiện tại chưa có công việc nào thuộc danh mục này.</p>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-primary mb-2">@item.Title</h5>
+                            <p class="card-text text-muted text-truncate flex-grow-1" style="max-height: 50px;">@item.Description</p>
+
+                            <div class="mt-3">
+                                <p class="mb-1"><strong>💰 Ngân sách:</strong> <span class="text-success fw-bold">@item.Budget.ToString("N0") đ</span></p>
+                                <p class="mb-3 small text-secondary">📅 Hạn nộp: @item.Deadline.ToString("dd/MM/yyyy")</p>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                                <span class="badge @(item.Status == "Active" ? "bg-success" : item.Status == "Processing" ? "bg-warning text-dark" : "bg-secondary")">
+                                    @item.Status
+                                </span>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary px-3">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

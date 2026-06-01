@@ -22,11 +22,14 @@ namespace SkillMatch.Models
 
         public string Status { get; set; } = "Pending"; // Pending (Chờ duyệt), Accepted (Được nhận), Rejected (Từ chối)
 
+        public string? ProductUrl { get; set; }
+
         // Thiết lập mối quan hệ liên kết dữ liệu (Navigation Properties)
         [ForeignKey("JobId")]
         public virtual Job? Job { get; set; }
 
         [ForeignKey("StudentId")]
         public virtual User? Student { get; set; }
+
     }
 }
