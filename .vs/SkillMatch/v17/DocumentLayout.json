@@ -1,7 +1,28 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Downloads\\PRN232\\SkillMatch\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|d:\\downloads\\prn232\\skillmatch\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|d:\\downloads\\prn232\\skillmatch\\views\\student\\myapplications.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|solutionrelative:views\\student\\myapplications.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|d:\\downloads\\prn232\\skillmatch\\controllers\\studentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|solutionrelative:controllers\\studentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|d:\\downloads\\prn232\\skillmatch\\views\\jobs\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|solutionrelative:views\\jobs\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|d:\\downloads\\prn232\\skillmatch\\models\\job.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0D39FB13-828A-40CC-BDA3-214BA2E8A474}|SkillMatch.csproj|solutionrelative:models\\job.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,6 +63,75 @@
             {
               "$type": "Bookmark",
               "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "D:\\Downloads\\PRN232\\SkillMatch\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "D:\\Downloads\\PRN232\\SkillMatch\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFEAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-01T19:37:55.84Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MyApplications.cshtml",
+              "DocumentMoniker": "D:\\Downloads\\PRN232\\SkillMatch\\Views\\Student\\MyApplications.cshtml",
+              "RelativeDocumentMoniker": "Views\\Student\\MyApplications.cshtml",
+              "ToolTip": "D:\\Downloads\\PRN232\\SkillMatch\\Views\\Student\\MyApplications.cshtml",
+              "RelativeToolTip": "Views\\Student\\MyApplications.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-01T19:37:05.156Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "StudentController.cs",
+              "DocumentMoniker": "D:\\Downloads\\PRN232\\SkillMatch\\Controllers\\StudentController.cs",
+              "RelativeDocumentMoniker": "Controllers\\StudentController.cs",
+              "ToolTip": "D:\\Downloads\\PRN232\\SkillMatch\\Controllers\\StudentController.cs",
+              "RelativeToolTip": "Controllers\\StudentController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAACQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T19:36:23.185Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\Downloads\\PRN232\\SkillMatch\\Views\\Jobs\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Jobs\\Index.cshtml",
+              "ToolTip": "D:\\Downloads\\PRN232\\SkillMatch\\Views\\Jobs\\Index.cshtml",
+              "RelativeToolTip": "Views\\Jobs\\Index.cshtml",
+              "ViewState": "AgIAABIAAAAAAAAAAAAgwC4AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-01T19:36:00.773Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Job.cs",
+              "DocumentMoniker": "D:\\Downloads\\PRN232\\SkillMatch\\Models\\Job.cs",
+              "RelativeDocumentMoniker": "Models\\Job.cs",
+              "ToolTip": "D:\\Downloads\\PRN232\\SkillMatch\\Models\\Job.cs",
+              "RelativeToolTip": "Models\\Job.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-01T17:59:42.739Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             }
           ]
         }

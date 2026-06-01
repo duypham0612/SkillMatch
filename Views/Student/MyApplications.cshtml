@@ -1,0 +1,60 @@
+﻿@model IEnumerable<SkillMatch.Models.Application>
+
+@{
+    ViewData["Title"] = "Việc làm của tôi";
+}
+
+<div class="container mt-4">
+    <h3 class="fw-bold mb-4 text-dark">📋 Nhật ký Ứng tuyển & Tiến độ công việc</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Bạn chưa ứng tuyển công việc nào. Hãy ra mục <a asp-controller="Jobs" asp-action="Index">Việc làm</a> để tìm việc ngay nhé!</div>
+    }
+    else
+    {
+        <div class="table-responsive bg-white p-3 rounded shadow-sm">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tên công việc</th>
+                        <th>Ngân sách</th>
+                        <th>Ngày nộp đơn</th>
+                        <th>Trạng thái đơn nộp</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var app in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-dark d-block">@app.Job?.Title</span>
+                                <small class="text-muted">Hạn chót: @app.Job?.Deadline.ToString("dd/MM/yyyy")</small>
+                            </td>
+                            <td class="text-danger fw-bold">@string.Format("{0:N0}", app.Job?.Budget) đ</td>
+                            <td class="text-muted">@app.AppliedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                @if (app.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">⏳ Đang chờ duyệt</span>
+                                }
+                                else if (app.Status == "Accepted")
+                                {
+                                    <span class="badge bg-success">✅ Được nhận (Đang làm)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">❌ Từ chối</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-controller="Jobs" asp-action="Details" asp-route-id="@app.JobId" class="btn btn-sm btn-outline-secondary">Chi tiết việc</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
